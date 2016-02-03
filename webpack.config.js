@@ -1,24 +1,58 @@
-'use strict';
-var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    entry: [
-        "./src/entry.js"
+  entry: "./app/main.js",
+  output: {
+    path: 'public',
+    filename: 'javascripts/[name].[hash].js',
+  },
+
+  module: {
+    loaders: [
+      {
+        test: /\.(js|jsx)$/,
+				loader: 'babel',
+        include: /app/,
+        exclude: /node_modules/,
+        query: {
+          presets: ['es2015', 'stage-1', 'react']
+        },
+      },
+      {
+				test: /\.css$/,
+				loaders: [
+					'style',
+					'css?minimize!'
+				]
+			},
+      {
+				test: /\.(png|jpe?g|gif|svg)$/,
+				loaders: [
+					'file?name=images/[name].[hash].[ext]',
+					'image-webpack?' + JSON.stringify({
+						progressive: true,
+						optimizationLevel: 7,
+						interlaced: true
+					})
+				]
+			},
+			{
+				test: /\.(woff|ttf|eot)$/,
+				loader: 'file?name=fonts/[name].[hash].[ext]'
+      }
     ],
-    output: {
-        path: path.join(__dirname, 'out'),
-        publicPath: './out/',
-        filename: "bundle.js"
-    },
-    externals: {
-        'react': 'React'
-    },
-    module: {
-        loaders: [
-            { test: /\.js$/, loader: "jsx!babel", include: /src/},
-            { test: /\.css$/, loader: "style!css"},
-            { test: /\.scss$/, loader: "style!css!sass"},
-            { test: /\.svg$/, loader: "url?limit=8192"}
-        ]
-    }
-};
+  },
+
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
+
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'static/index.html',
+      inject: 'body'
+    })
+  ],
+
+	devtool: "source-map"
+}
