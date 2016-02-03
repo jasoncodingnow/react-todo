@@ -83,6 +83,39 @@ AppDispatcher.register((action) => {
       todoStore.emitChange();
       break
 
-    case TodoConstants.complete
+    case TodoConstants.complete:
+      update(action.id, {
+        complete: true
+      })
+      todoStore.emitChange()
+      break
+
+    case TodoConstants.undoComplete:
+      update(action.id, {
+        complete: false
+      })
+      todoStore.emitChange()
+      break
+
+    case TodoConstants.toggleCompleteAll:
+      if (todoStore.areAllComplete()) {
+        updateAll({
+          complete: false
+        })
+      } else {
+        updateAll({
+          complete: true
+        })
+      }
+      todoStore.emitChange()
+      break
+
+    case TodoConstants.destroyCompleted:
+      destroyCompleted()
+      todoStore.emitChange()
+      break
+
+    default:
+      return
   }
 });
